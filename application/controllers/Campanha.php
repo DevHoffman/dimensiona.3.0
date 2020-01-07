@@ -56,7 +56,7 @@ class Campanha extends CI_Controller
 		$data_agora = date('Y-m-d', time());
 		$hora_agora = date('H:i', time());
 
-		$data['rows_dimensiona'] = $this->query->abs_tempo_real('2019-11-21', '12:00');
+		$data['rows_dimensiona'] = $this->query->abs_tempo_real_churisley('2019-11-21', '12:00');
 
 		$this->load->view('campanha/campanha', $data);
 
@@ -64,23 +64,8 @@ class Campanha extends CI_Controller
 
 	public function datatables()
 	{
-		$datatables = $this->datatable->exec(
-			$this->input->post(),
-			'tbl_escala E',
-			[
-				['db' => 'C.Campanha', 'dt' => 'Campanha'],
-				['db' => 'CodiUsuario', 'dt' => 'CodiUsuario'],
-				['db' => 'CodiSupervisor', 'dt' => 'CodiSupervisor'],
-				['db' => 'CodiCoordenador', 'dt' => 'CodiCoordenador',
-//					'formatter' => function($value, $row) {
-//						return number_format($value, 4, ',', '.');
-//					}
-				]
-			],
-			[
-				[ 'tbl_campanha C', 'C.CodiCampanha = E.CodiCampanha' ]
-			]
-		);
+
+		$datatables = $this->query->abs_tempo_real_churisley('2019-11-21', '12:00');
 
 		$this->output->set_content_type('application/json')->set_output(json_encode($datatables));
 	}

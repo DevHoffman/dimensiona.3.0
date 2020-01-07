@@ -11,14 +11,15 @@ $(document).ready(function() {
 				pageLength: 10,
 				ajax: {
 					url: $('#table').data('url'),
+					"dataSrc": "",
 					type: 'POST',
 					dataType: 'json'
 				},
 				columns: [
 					{ data: 'Campanha', name: 'Campanha' },
-					{ data: 'CodiUsuario', name: 'CodiUsuario' },
-					{ data: 'CodiSupervisor', name: 'CodiSupervisor' },
-					{ data: 'CodiCoordenador', name: 'CodiCoordenador' }
+					{ data: 'Escalado', name: 'Escalado' },
+					{ data: 'ABS', name: 'ABS' },
+					{ data: 'porcentagem', name: 'porcentagem' }
 				],
 				columnDefs: [
 					{ orderable: false, className: 'select-checkbox', targets: 0 }
@@ -29,7 +30,7 @@ $(document).ready(function() {
 				},
 				order: [[ 0, 'asc' ]],
 				rowCallback: function(row, data) {
-					// $(row).data('id', data.id).css('cursor', 'pointer');
+					$(row).data('id', data.id).css('cursor', 'pointer');
 					// var btnDelete = $(`<a href="${url_delete}${data.id}" class="text-danger"><i class="fas fa-trash"></i></a>`);
 
 					// btnDelete.showConfirm({
@@ -48,9 +49,9 @@ $(document).ready(function() {
 
 					// $('td:eq(4)', row).html(btnDelete);
 
-					$('td:not(:first-child):not(:last-child)', row).each(function() {
+					$('td', row).each(function() {
 						$(this).on('click', function() {
-							window.location.href = `${url_update}/${data.id}`
+							window.location.href = 'campanha/detalhes/' + data.CodiCampanha;
 						});
 					});
 				},
@@ -115,11 +116,7 @@ $(document).ready(function() {
 							}
 						},
 					}
-				],
-				dom: "Bfrtip",
-				deferRender: true,
-				responsive: true,
-				"pageLength": 15
+				]
 			});
 		}
 	};

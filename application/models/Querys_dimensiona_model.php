@@ -8,8 +8,15 @@ class Querys_dimensiona_model extends CI_Model {
 		parent::__construct();
 	}
 
-	public function abs_tempo_real($data, $hora) {
-		$query = $this->db->query("SELECT E.CodiCampanha,
+	public function abs_tempo_real_churisley($data, $hora) {
+		$query = $this->db->query("SELECT x.Campanha, 
+											x.CodiCampanha, 
+											x.ABS,
+											x.Coordenador, 
+											x.Escalado,
+											IFNULL(round(((x.ABS * 100) / x.Escalado),2), 0) as porcentagem,
+											x.Supervisor 
+											from (SELECT E.CodiCampanha,
 		   C.Campanha,
 		   (SELECT tu.Usuario
 			FROM tbl_supervisor S
@@ -23,14 +30,14 @@ class Querys_dimensiona_model extends CI_Model {
 			  AND C.CodiUsuario = tu.CodiUsuario) as Coordenador,
 		
 		   COUNT(*) as Escalado,
-		   (SELECT COUNT(*)
+		   IFNULL((SELECT COUNT(*)
 			FROM tbl_ausencia A
 					 JOIN tbl_escala ES ON ES.CodiUsuario = A.CodiUsuario AND ES.DataEscalaUsuario = A.DataAusencia
 					 JOIN tbl_campanha C ON ES.CodiCampanha = C.CodiCampanha
 			WHERE ES.DataEscalaUsuario = '{$data}'
 			  AND ES.HorarioEscalaUsuario <= '{$hora}'
 			  AND ES.CodiCampanha = E.CodiCampanha
-			GROUP BY C.Campanha) as ABS
+			GROUP BY C.Campanha), 0) as ABS
 		FROM tbl_escala E
 				 JOIN tbl_campanha C ON C.CodiCampanha = E.CodiCampanha
 				 JOIN tbl_usuarios U ON U.CodiUsuario = E.CodiUsuario
@@ -38,7 +45,49 @@ class Querys_dimensiona_model extends CI_Model {
 			  AND E.HorarioEscalaUsuario <= '{$hora}'
 		  AND E.HorarioEscalaUsuario <> 'F'
 		  AND E.CodiCoordenador  <> 2
-		GROUP BY C.Campanha;");
+		GROUP BY C.Campanha) AS x;");
+
+		return $query->result_array();
+	}
+
+	public function abs_tempo_real_ericot($data, $hora) {
+		$query = $this->db->query("SELECT x.Campanha, 
+											x.CodiCampanha, 
+											x.ABS,
+											x.Coordenador, 
+											x.Escalado,
+											CONCAT(IFNULL(round(((x.ABS * 100) / x.Escalado),2), 0), ' %') as porcentagem,
+											x.Supervisor 
+											from (SELECT E.CodiCampanha,
+		   C.Campanha,
+		   (SELECT tu.Usuario
+			FROM tbl_supervisor S
+					 JOIN tbl_usuarios tu on S.CodiUsuario = tu.CodiUsuario
+			WHERE S.CodiSupervisor = E.CodiSupervisor
+			  AND S.CodiUsuario = tu.CodiUsuario) as Supervisor,
+		   (SELECT tu.Usuario
+			FROM tbl_coordenador C
+					 JOIN tbl_usuarios tu on C.CodiUsuario = tu.CodiUsuario
+			WHERE C.CodiCoordenador = E.CodiCoordenador
+			  AND C.CodiUsuario = tu.CodiUsuario) as Coordenador,
+		
+		   COUNT(*) as Escalado,
+		   IFNULL((SELECT COUNT(*)
+			FROM tbl_ausencia A
+					 JOIN tbl_escala ES ON ES.CodiUsuario = A.CodiUsuario AND ES.DataEscalaUsuario = A.DataAusencia
+					 JOIN tbl_campanha C ON ES.CodiCampanha = C.CodiCampanha
+			WHERE ES.DataEscalaUsuario = '{$data}'
+			  AND ES.HorarioEscalaUsuario <= '{$hora}'
+			  AND ES.CodiCampanha = E.CodiCampanha
+			GROUP BY C.Campanha), 0) as ABS
+		FROM tbl_escala E
+				 JOIN tbl_campanha C ON C.CodiCampanha = E.CodiCampanha
+				 JOIN tbl_usuarios U ON U.CodiUsuario = E.CodiUsuario
+		WHERE E.DataEscalaUsuario = '{$data}'
+			  AND E.HorarioEscalaUsuario <= '{$hora}'
+		  AND E.HorarioEscalaUsuario <> 'F'
+		  AND E.CodiCoordenador  <> 2
+		GROUP BY C.Campanha) AS x;");
 
 		return $query->result_array();
 	}
