@@ -23,7 +23,7 @@ class Home extends CI_Controller
 		$data_agora = date('Y-m-d', time());
 		$hora_agora = date('H:i', time());
 
-		$data['rows_dimensiona'] = $this->query->abs_tempo_real_churisley('2019-11-21', '12:00');
+		$data['rows_dimensiona'] = $this->query->abs_tempo_real_churisley_campanha('2019-11-21', '12:00');
 
 		$this->load->view('home', $data);
 	}

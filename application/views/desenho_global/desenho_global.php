@@ -18,17 +18,17 @@
 					<div class="col-xs-12">
 
 						<div class="row centered">
-							<h3>Visão por Supervisor</h3>
+							<h3>Desenho Global</h3>
 							<hr />
 						</div>
 
 						<table id="table" data-url="<?php echo $datasource ?>" data-update="<?php echo $url_update; ?>" class="table table-hover datatable-buttons">
 							<thead>
 							<tr>
+								<th>Nome</th>
 								<th>Supervisor</th>
-								<th>Escalados</th>
-								<th>Absenteísmo</th>
-								<th>%</th>
+								<th>Coordenador</th>
+								<th>Campanha</th>
 								<th></th>
 							</tr>
 							</thead>
@@ -66,11 +66,11 @@
 						dataType: 'json'
 					},
 					columns: [
+						{ data: 'Usuario', name: 'Usuario' },
 						{ data: 'Supervisor', name: 'Supervisor' },
-						{ data: 'Escalado', name: 'Escalado' },
-						{ data: 'ABS', name: 'ABS' },
-						{ data: 'porcentagem', name: 'porcentagem' },
-						{ data: 'CodiSupervisor', name: 'CodiSupervisor', visible: false }
+						{ data: 'Coordenador', name: 'Coordenador' },
+						{ data: 'Campanha', name: 'Campanha' },
+						{ data: 'CodiUsuario', name: 'CodiUsuario', visible: false }
 					],
 					columnDefs: [
 						{ orderable: false, className: 'select-checkbox', targets: 0 }
@@ -82,11 +82,6 @@
 					order: [[ 0, 'asc' ]],
 					rowCallback: function(row, data) {
 						$(row).data('id', data.id).css('cursor', 'pointer');
-						$('td', row).each(function() {
-							$(this).on('click', function() {
-								window.location.href = "supervisor/detalhes/" + data.CodiSupervisor;
-							});
-						});
 					},
 					drawCallback: function() {
 

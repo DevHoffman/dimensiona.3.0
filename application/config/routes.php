@@ -50,13 +50,5 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 |		my-controller/my-method	-> my_controller/my_method
 */
 $route['default_controller'] = 'home';
-$route['home/campanha'] = 'home/campanha';
-$route['home/campanha/detalhes/(:num)'] = 'home/campanha/detalhes/$id';
-$route['home/coordenador'] = 'home/coordenador';
-$route['home/supervisor'] = 'home/supervisor';
-$route['home/operador'] = 'home/operador';
-$route['home/cad_campanha'] = 'home/cad_campanha';
-$route['home/cad_usuario'] = 'home/cad_usuario';
-$route['home/cad_presenca'] = 'home/cad_presenca';
 $route['404_override'] = '';
 $route['translate_uri_dashes'] = FALSE;

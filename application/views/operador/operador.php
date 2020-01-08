@@ -1,207 +1,171 @@
-<?php
+<!DOCTYPE html>
+<html lang="pt-br">
+	<head>
+		<?php echo $header ?>
+	</head>
+	<body>
 
-// Dia de Ontem Até amanhã de Hoje
-$DataZona = new DateTimeZone('America/Sao_Paulo');
-$data = new DateTime('NOW');
-$data->setTimezone($DataZona);
-$data_Hoje = date_format($data, 'Y-m-d');
-$hora_agora = date_format($data, 'H:i');
+		<?php echo $navbar ?>
 
-//Conectando ao Banco
-require_once 'assets/includes/conexao.php';
+		<div id="main-content">
+			<div class="wrapper">
+				<div class="row">
 
-$_SESSION['painel_administrativo'] = true;
+					<div class="col-sm-9 mt">
 
-if ( !isset($_SESSION['auth']) ){
-  $_SESSION['auth'] = false;
-}
+						<!-- Tabelas -->
+						<div class="row content-panel mt">
+							<div class="col-xs-12">
 
-if ( $_SESSION['auth'] == false ){
-    header('location: ../');
-    exit;
-}
-else{
-    require_once 'assets/includes/header.php';
-}
+								<div class="row centered">
+									<h3>Visão por Operador</h3>
+									<hr />
+								</div>
 
-require_once 'assets/includes/menu_esquerdo.php';
+								<table id="table" data-url="<?php echo $datasource ?>" data-update="<?php echo $url_update; ?>" class="table table-hover datatable-buttons">
+									<thead>
+									<tr>
+										<th>Nome</th>
+										<th>Supervisor</th>
+										<th>Coordenador</th>
+										<th>Campanha</th>
+										<th>Horario</th>
+										<th></th>
+									</tr>
+									</thead>
+								</table>
+							</div><!-- /col-xs-12 -->
+						</div><!-- /row -->
 
-require_once 'assets/includes/menu_topo.php';
+					</div>
 
-$sql = "SELECT U.Usuario,
-       (SELECT tu.Usuario
-        FROM tbl_supervisor S
-                 JOIN tbl_usuarios tu on S.CodiUsuario = tu.CodiUsuario
-        WHERE S.CodiSupervisor = E.CodiSupervisor
-          AND S.CodiUsuario = tu.CodiUsuario) as Supervisor,
-       (SELECT tu.Usuario
-        FROM tbl_coordenador C
-                 JOIN tbl_usuarios tu on C.CodiUsuario = tu.CodiUsuario
-        WHERE C.CodiCoordenador = E.CodiCoordenador
-          AND C.CodiUsuario = tu.CodiUsuario) as Coordenador,
-       C.Campanha
-    FROM tbl_escala E
-        JOIN tbl_campanha C ON C.CodiCampanha = E.CodiCampanha
-        JOIN tbl_usuarios U ON U.CodiUsuario = E.CodiUsuario
-        JOIN tbl_ausencia A ON A.CodiUsuario = E.CodiUsuario AND A.DataAusencia = E.DataEscalaUsuario
-    WHERE E.DataEscalaUsuario = '2019-11-21'
-      AND E.HorarioEscalaUsuario < '12:00'
-      AND E.HorarioEscalaUsuario NOT IN ('F')
-      AND E.CodiCoordenador NOT IN (2)
-    GROUP BY U.Usuario;";
-$query = $ligacao->query($sql);
- 
-while ( $rows_dimensiona[] = mysqli_fetch_array($query) ){ 
-}
+					<?php echo $sidebar ?>
 
-mysqli_close($ligacao);
+				</div> <!-- /row -->
+			</div>
+		</div><!--main content end-->
 
-?>
+		<?php echo $footer ?>
 
-<section id="main-content">
-  	<section class="wrapper">
-	    <div class="row">
-	      	<div class="col-xs-9 mt">
+		<?php echo $scripts ?>
 
-		        <!-- BASIC FORM ELELEMNTS -->
-                <div class="row content-panel mt">
-                    <div class="col-xs-12">
+		<script>
+		// Datatables
+		$(document).ready(function() {
+			var handleDataTableButtons = function() {
+				if ($(".datatable-buttons").length) {
+					$("#table").DataTable({
+						// processing: true,
+						// serverSide: true,
+						lengthChange: false,
+						responsive: true,
+						pageLength: 10,
+						ajax: {
+							url: $('#table').data('url'),
+							"dataSrc": "",
+							type: 'POST',
+							dataType: 'json'
+						},
+						columns: [
+							{ data: 'Usuario', name: 'Usuario' },
+							{ data: 'Supervisor', name: 'Supervisor' },
+							{ data: 'Coordenador', name: 'Coordenador' },
+							{ data: 'Campanha', name: 'Campanha' },
+							{ data: 'Horario', name: 'Horario' },
+							{ data: 'CodiUsuario', name: 'CodiUsuario', visible: false }
+						],
+						columnDefs: [
+							{ orderable: false, className: 'select-checkbox', targets: 0 }
+						],
+						select: {
+							style: "multi",
+							selector: "td:first-child"
+						},
+						order: [[ 0, 'asc' ]],
+						rowCallback: function(row, data) {
+							$(row).data('id', data.id).css('cursor', 'pointer');
+						},
+						drawCallback: function() {
 
-    		        	<div class="row centered">
-    		        		<h3>Visão por Operador</h3>
-    			        	<hr />
-    		        	</div>
+							$('[data-toggle="tooltip"]').tooltip();
+						},
 
-    	              	<table class="table table-hover datatable-buttons">
-    		                <thead>
-    					        <tr>
-    					        	<th> Nome </th>
-    					            <th> Supervisor </th>
-    					            <th> Coordenador </th>
-                                    <th> Campanha </th>
-    					        </tr>
-    					    </thead>
+						"language": {
+							"sProcessing":    "Procesando...",
+							"sLengthMenu":    "Mostrar _MENU_ registros",
+							"sZeroRecords":   "Nenhum registro encontrado",
+							"sEmptyTable":    "Nenhum registro encontrado",
+							"sInfo":          "Mostrando registros de _START_ à _END_ de um total de _TOTAL_ registros",
+							"sInfoEmpty":     "Mostrando registros de 0 à 0 de um total de 0 registros",
+							"sInfoFiltered":  "(filtrado de um total de _MAX_ registros)",
+							"sInfoPostFix":   "",
+							"sSearch":        "Buscar:",
+							"sUrl":           "",
+							"sInfoThousands":  ",",
+							"sLoadingRecords": "Cargando...",
+							"oPaginate": {
+								"sFirst":    "Primero",
+								"sLast":    "Último",
+								"sNext":    "Próximo",
+								"sPrevious": "Anterior"
+							},
+							"oAria": {
+								"sSortAscending":  ": Activar para ordenar la columna de manera ascendente",
+								"sSortDescending": ": Activar para ordenar la columna de manera descendente"
+							}
+						},
 
-    					    <tbody>
-    					        <?php
+						buttons: [
+							{
+								extend: 'copy',
+								text: 'Copiar',
+								// className: 'btn-theme',
+								exportOptions: {
+									modifier: {
+										page: 'current'
+									}
+								},
+							},
+							{
+								extend: 'excel',
+								text: 'Excel',
+								// className: 'btn-theme',
+								exportOptions: {
+									modifier: {
+										page: 'current'
+									}
+								},
+							},
+							{
+								extend: 'pdf',
+								text: 'PDF',
+								// className: 'btn-theme',
+								exportOptions: {
+									modifier: {
+										page: 'current'
+									}
+								},
+							}
+						]
+					});
+				}
+			};
 
-                                foreach ( $rows_dimensiona as $valor) {
+			TableManageButtons = function() {
+				"use strict";
+				return {
+					init: function() {
+						handleDataTableButtons();
+					}
+				};
+			}();
 
-                                    if ( isset($valor['Campanha']) ) {
+			TableManageButtons.init();
+		});
+		// Datatables
 
-                                        printf('<tr>');
-                                      
-                                        printf('<td>' . $valor['Usuario'] . '</td>');
-                                        printf('<td>' . $valor['Supervisor'] . '</td>');
-                                        printf('<td>' . $valor['Coordenador'] . '</td>');
-                                        printf('<td>' . $valor['Campanha'] . '</td>');
-                                      
-                                        printf('</tr>');
-                                    }
-                                }
+	</script>
 
-    					        ?>
-    					    </tbody>
-    	              	</table>
+	</body>
 
-                    </div>
-		        </div><!-- /col-xs-12 -->
-
-	      	</div>
-	      	<!-- /row -->
-
-	      	<?php require_once 'assets/includes/menu_direito.php' ?>
-
-	    </div>
-	    <!-- /row -->
-  	</section>
-</section>
-<!--main content end-->
-
-
-<?php require_once 'assets/includes/footer.php'; ?>
-
-<!-- Datatables -->
-<script>
-    $(document).ready(function() {
-        var handleDataTableButtons = function() {
-            if ($(".datatable-buttons").length) {
-                $(".datatable-buttons").DataTable({
-                    
-                    "language": {
-                        "sProcessing":    "Procesando...",
-                        "sLengthMenu":    "Mostrar _MENU_ registros",
-                        "sZeroRecords":   "Nenhum registro encontrado",
-                        "sEmptyTable":    "Nenhum registro encontrado",
-                        "sInfo":          "Mostrando registros de _START_ à _END_ de um total de _TOTAL_ registros",
-                        "sInfoEmpty":     "Mostrando registros de 0 à 0 de um total de 0 registros",
-                        "sInfoFiltered":  "(filtrado de um total de _MAX_ registros)",
-                        "sInfoPostFix":   "",
-                        "sSearch":        "Buscar:",
-                        "sUrl":           "",
-                        "sInfoThousands":  ",",
-                        "sLoadingRecords": "Cargando...",
-                        "oPaginate": {
-                            "sFirst":    "Primero",
-                            "sLast":    "Último",
-                            "sNext":    "Próximo",
-                            "sPrevious": "Anterior"
-                        },
-                        "oAria": {
-                            "sSortAscending":  ": Activar para ordenar la columna de manera ascendente",
-                            "sSortDescending": ": Activar para ordenar la columna de manera descendente"
-                        }
-                    },
-
-                    buttons: [{
-                            extend: 'copy',
-                            text: 'Copiar', 
-                            // className: 'btn-theme',
-                            exportOptions: {
-                                modifier: {
-                                    page: 'current'
-                                }
-                            },
-                        },
-                        {
-                            extend: 'excel',
-                            text: 'Excel', 
-                            // className: 'btn-theme',
-                            exportOptions: {
-                                modifier: {
-                                    page: 'current'
-                                }
-                            },
-                        },
-                        {
-                            extend: 'pdf',
-                            text: 'PDF', 
-                            // className: 'btn-theme',
-                            exportOptions: {
-                                modifier: {
-                                    page: 'current'
-                                }
-                            },
-                        },
-                    ],
-                    dom: "Bfrtip",
-                    deferRender: true,
-                    responsive: true,
-                    "pageLength": 15
-                });
-            }
-        };
-
-        TableManageButtons = function() {
-            "use strict";
-            return {
-                init: function() {
-                    handleDataTableButtons();
-                }
-            };
-        }();
-
-        TableManageButtons.init();
-    });
-</script>
-<!-- /Datatables -->
+</html>

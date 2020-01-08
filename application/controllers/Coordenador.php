@@ -2,13 +2,13 @@
 
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Campanha extends CI_Controller
+class Coordenador extends CI_Controller
 {
 
 	function __construct() {
 		parent::__construct();
-		$this->route = base_url('campanha');
-		$this->views = 'campanha';
+		$this->route = base_url('coordenador');
+		$this->views = 'coordenador';
 		$this->load->helper('date');
 		$this->load->model('Querys_dimensiona_model', 'query');
 	}
@@ -53,36 +53,9 @@ class Campanha extends CI_Controller
 
 		$data['url_update'] = $this->route . '/detalhes/';
 
-		$this->load->view("{$this->views}/campanha", $data);
+		$this->load->view("{$this->views}/coordenador", $data);
 
 	}
-
-//	public function datatables()
-//	{
-//
-//		$d = $this->datatable->exec(
-//			$this->input->post(),
-//			'tbl_escala E',
-//			[
-//				['db' => 'U.Usuario', 'dt' => 'Usuario'],
-//				['db' => 'E.CodiSupervisor', 'dt' => 'CodiSupervisor'],
-//				['db' => 'E.CodiCoordenador', 'dt' => 'CodiCoordenador'],
-//				['db' => 'C.Campanha', 'dt' => 'Campanha'],
-//				['db' => 'A.CodiAusencia', 'dt' => 'CodiAusencia']
-//			],
-//			[
-//				[ "tbl_ausencia A", "A.CodiUsuario = E.CodiUsuario AND A.DataAusencia = E.DataEscalaUsuario" ],
-//				[ "tbl_campanha C", "C.CodiCampanha = E.CodiCampanha" ],
-//				[ "tbl_usuarios U", "U.CodiUsuario = E.CodiUsuario" ],
-//				[ "tbl_supervisor S", "S.CodiSupervisor = E.CodiSupervisor" ],
-////				[ "tbl_usuarios US", "US.CodiS" ],
-//
-//			],
-//			"E.DataEscalaUsuario = '2019-11-21'"
-//		);
-//
-//		$this->output->set_content_type('application/json')->set_output(json_encode($d));
-//	}
 
 	public function datatables()
 	{
@@ -90,27 +63,25 @@ class Campanha extends CI_Controller
 		$data_agora = date('Y-m-d', time());
 		$hora = date('H:i', time());
 
-		$datatables = $this->query->abs_tempo_real_churisley_campanha('2019-11-21', $hora);
+		$datatables = $this->query->abs_tempo_real_churisley_coordenador('2019-11-21', $hora);
 
 		$this->output->set_content_type('application/json')->set_output(json_encode($datatables));
 
 	}
 
-	public function datatables_campanha($id_campanha)
+	public function datatables_coordenador($id_coordenador)
 	{
 
 		$data_agora = date('Y-m-d', time());
 		$hora = date('H:i', time());
 
-		$datatables = $this->query->abs_tempo_real_churisley_codicampanha('2019-11-21', $hora, $id_campanha);
-
+		$datatables = $this->query->abs_tempo_real_churisley_codicoordenador('2019-11-21', $hora, $id_coordenador);
 		$this->output->set_content_type('application/json')->set_output(json_encode($datatables));
 	}
 
-	public function detalhes($id_campanha)
+	public function detalhes($id_coordenador)
 	{
-
-		$data['datasource'] = "{$this->route}/datatables_campanha/{$id_campanha}";
+		$data['datasource'] = "{$this->route}/datatables_coordenador/{$id_coordenador}";
 		$page_title = "Dimensiona";
 		$data['header'] = $this->template->header([
 			'title' 	=> $page_title,
@@ -145,10 +116,10 @@ class Campanha extends CI_Controller
 			]
 		]);
 
-		$data['h3'] = $this->query->findCampanhaById($id_campanha);
+		$data['h3'] = $this->query->findCoordenadorById($id_coordenador);
 
-		$data['h3'] = "Visão da Campanha - " . $data['h3'][0]['Campanha'];
+		$data['h3'] = "Visão por Coordenador - " . $data['h3'][0]['Usuario'];
 
-		$this->load->view("{$this->views}/campanha_detalhes", $data);
+		$this->load->view("{$this->views}/coordenador_detalhes", $data);
 	}
 }

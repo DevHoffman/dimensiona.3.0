@@ -18,35 +18,20 @@
 							<div class="col-xs-12">
 
 								<div class="row centered">
-									<h3>Visão da Campanha - <?php echo $rows_dimensiona[0]['Campanha']; ?></h3>
+									<h3> <?php echo $h3; ?></h3>
 									<hr />
 								</div>
 
-								<table class="table table-hover datatable-buttons">
+								<table id="table-detalhes" class="table table-hover datatable-buttons" data-url="<?php echo $datasource ?>">
 									<thead>
-									<tr>
-										<th>Nome</th>
-										<th>Supervisor</th>
-										<th>Coordenador</th>
-										<th> Horário </th>
-									</tr>
+											<tr>
+												<th> Nome </th>
+												<th> Supervisor </th>
+												<th> Coordenador </th>
+												<th> Horário </th>
+												<th></th>
+											</tr>
 									</thead>
-
-									<tbody>
-
-									<?php
-
-									foreach ( $rows_dimensiona as $valor) {
-										printf('<tr>');
-										printf('<td>' . $valor['Usuario'] . '</td>');
-										printf('<td>' . $valor['Supervisor'] . '</td>');
-										printf('<td>' . $valor['Coordenador'] . '</td>');
-										printf('<td>' . $valor['Horario'] . '</td>');
-										printf('</tr>');
-									}
-
-									?>
-									</tbody>
 								</table>
 
 							</div><!-- /col-xs-12 -->
@@ -63,6 +48,115 @@
 		<?php echo $footer ?>
 
 		<?php echo $scripts ?>
+
+		<script>
+			// Datatables
+			$(document).ready(function() {
+				var handleDataTableButtons = function() {
+					if ($(".datatable-buttons").length) {
+						$("#table-detalhes").DataTable({
+							// processing: true,
+							// serverSide: true,
+							lengthChange: false,
+							responsive: true,
+							pageLength: 10,
+							ajax: {
+								url: $('#table-detalhes').data('url'),
+								"dataSrc": "",
+								type: 'POST',
+								dataType: 'json'
+							},
+							columns: [
+								{ data: 'Usuario', name: 'Usuario' },
+								{ data: 'Supervisor', name: 'Supervisor' },
+								{ data: 'Coordenador', name: 'Coordenador' },
+								{ data: 'Horario', name: 'Horario' },
+								{ data: 'CodiUsuario', name: 'CodiUsuario', visible: false }
+							],
+							order: [[ 0, 'asc' ]],
+							rowCallback: function(row, data) {
+								$(row).data('id', data.id).css('cursor', 'pointer');
+							},
+							drawCallback: function() {
+
+								$('[data-toggle="tooltip"]').tooltip();
+							},
+
+							"language": {
+								"sProcessing":    "Procesando...",
+								"sLengthMenu":    "Mostrar _MENU_ registros",
+								"sZeroRecords":   "Nenhum registro encontrado",
+								"sEmptyTable":    "Nenhum registro encontrado",
+								"sInfo":          "Mostrando registros de _START_ à _END_ de um total de _TOTAL_ registros",
+								"sInfoEmpty":     "Mostrando registros de 0 à 0 de um total de 0 registros",
+								"sInfoFiltered":  "(filtrado de um total de _MAX_ registros)",
+								"sInfoPostFix":   "",
+								"sSearch":        "Buscar:",
+								"sUrl":           "",
+								"sInfoThousands":  ",",
+								"sLoadingRecords": "Cargando...",
+								"oPaginate": {
+									"sFirst":    "Primero",
+									"sLast":    "Último",
+									"sNext":    "Próximo",
+									"sPrevious": "Anterior"
+								},
+								"oAria": {
+									"sSortAscending":  ": Activar para ordenar la columna de manera ascendente",
+									"sSortDescending": ": Activar para ordenar la columna de manera descendente"
+								}
+							},
+
+							buttons: [
+								{
+									extend: 'copy',
+									text: 'Copiar',
+									// className: 'btn-theme',
+									exportOptions: {
+										modifier: {
+											page: 'current'
+										}
+									},
+								},
+								{
+									extend: 'excel',
+									text: 'Excel',
+									// className: 'btn-theme',
+									exportOptions: {
+										modifier: {
+											page: 'current'
+										}
+									},
+								},
+								{
+									extend: 'pdf',
+									text: 'PDF',
+									// className: 'btn-theme',
+									exportOptions: {
+										modifier: {
+											page: 'current'
+										}
+									},
+								}
+							]
+						});
+					}
+				};
+
+				TableManageButtons = function() {
+					"use strict";
+					return {
+						init: function() {
+							handleDataTableButtons();
+						}
+					};
+				}();
+
+				TableManageButtons.init();
+			});
+			// Datatables
+
+		</script>
 
 	</body>
 </html>

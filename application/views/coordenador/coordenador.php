@@ -1,273 +1,174 @@
-<?php
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+	<?php echo $header ?>
+</head>
+<body>
 
-// Dia de Ontem Até amanhã de Hoje
-$DataZona = new DateTimeZone('America/Sao_Paulo');
-$data = new DateTime('NOW');
-$data->setTimezone($DataZona);
-$data_Hoje = date_format($data, 'Y-m-d');
-$hora_agora = date_format($data, 'H:i');
+<?php echo $navbar ?>
 
-//Conectando ao Banco
-require_once 'assets/includes/conexao.php';
+<div id="main-content">
+	<div class="wrapper">
+		<div class="row">
 
-$_SESSION['painel_administrativo'] = true;
+			<div class="col-sm-9 mt">
 
-if ( !isset($_SESSION['auth']) ){
-  	$_SESSION['auth'] = false;
-}
+				<!-- Tabelas -->
+				<div class="row content-panel mt">
+					<div class="col-xs-12">
 
-if ( $_SESSION['auth'] == false ){
-	header('location: ../');
-  	exit;
-}
-else{
-    require_once 'assets/includes/header.php';
-}
+						<div class="row centered">
+							<h3>Visão por Coordenador</h3>
+							<hr />
+						</div>
 
+						<table id="table" data-url="<?php echo $datasource ?>" data-update="<?php echo $url_update; ?>" class="table table-hover datatable-buttons">
+							<thead>
+							<tr>
+								<th>Coordenador</th>
+								<th>Escalados</th>
+								<th>Absenteísmo</th>
+								<th>%</th>
+								<th></th>
+							</tr>
+							</thead>
+						</table>
+					</div><!-- /col-xs-12 -->
+				</div><!-- /row -->
 
-require_once 'assets/includes/menu_esquerdo.php';
+			</div>
 
-require_once 'assets/includes/menu_topo.php';
+			<?php echo $sidebar ?>
 
-if ( isset($_GET['CodiCoordenador']) ){
+		</div> <!-- /row -->
+	</div>
+</div><!--main content end-->
 
-	$CodiCoordenador = trim(addslashes($_GET['CodiCoordenador']));
+<?php echo $footer ?>
 
-    $sql = "SELECT E.CodiCoordenador,
-        U.Usuario,
-       (SELECT tu.Usuario
-        FROM tbl_supervisor S
-                 JOIN tbl_usuarios tu on S.CodiUsuario = tu.CodiUsuario
-        WHERE S.CodiSupervisor = E.CodiSupervisor
-          AND S.CodiUsuario = tu.CodiUsuario) as Supervisor,
-       (SELECT tu.Usuario
-        FROM tbl_coordenador C
-                 JOIN tbl_usuarios tu on C.CodiUsuario = tu.CodiUsuario
-        WHERE C.CodiCoordenador = E.CodiCoordenador
-          AND C.CodiUsuario = tu.CodiUsuario) as Coordenador,
-        C.Campanha
-    FROM tbl_escala E
-             JOIN tbl_campanha C ON C.CodiCampanha = E.CodiCampanha
-             JOIN tbl_usuarios U ON U.CodiUsuario = E.CodiUsuario
-             JOIN tbl_ausencia A ON A.CodiUsuario = E.CodiUsuario AND A.DataAusencia = E.DataEscalaUsuario
-    WHERE E.DataEscalaUsuario = '2019-11-21'
-      AND E.HorarioEscalaUsuario < '12:00'
-      AND E.HorarioEscalaUsuario NOT IN ('F')
-      AND E.CodiCoordenador NOT IN (2)
-      AND E.CodiCoordenador = '$CodiCoordenador'
-    GROUP BY U.Usuario;";
-    $query = $ligacao->query($sql);
+<?php echo $scripts ?>
 
-}
-else{
-
-    $sql = "SELECT E.CodiCoordenador,
-       (SELECT tu.Usuario
-        FROM tbl_coordenador C
-                 JOIN tbl_usuarios tu on C.CodiUsuario = tu.CodiUsuario
-        WHERE C.CodiCoordenador = E.CodiCoordenador
-          AND C.CodiUsuario = tu.CodiUsuario) as Coordenador,
-
-       COUNT(U.CodiUsuario) as Escalado,
-       (SELECT COUNT(*)
-        FROM tbl_ausencia A
-                 JOIN tbl_escala ES ON ES.CodiUsuario = A.CodiUsuario AND ES.DataEscalaUsuario = A.DataAusencia
-                 JOIN tbl_coordenador C ON ES.CodiCoordenador = C.CodiCoordenador
-        WHERE A.CodiUsuario = ES.CodiUsuario
-          AND A.DataAusencia = ES.DataEscalaUsuario
-          AND A.DataAusencia = E.DataEscalaUsuario
-          AND ES.CodiCoordenador = E.CodiCoordenador
-          AND ES.HorarioEscalaUsuario < '12:00'
-        GROUP BY C.CodiCoordenador) as ABS
-    FROM tbl_escala E
-             JOIN tbl_campanha C ON C.CodiCampanha = E.CodiCampanha
-             JOIN tbl_usuarios U ON U.CodiUsuario = E.CodiUsuario
-    WHERE E.DataEscalaUsuario = '2019-11-21'
-      AND E.HorarioEscalaUsuario < '12:00'
-      AND E.HorarioEscalaUsuario NOT IN ('F')
-      AND E.CodiCoordenador NOT IN (2)
-    GROUP BY E.CodiCoordenador;";
-    $query = $ligacao->query($sql);
-
-}
-
-mysqli_close($ligacao);
- 
-while ( $rows_dimensiona[] = mysqli_fetch_array($query) ){ 
-}
-
-?>
-
-<section id="main-content">
-  	<section class="wrapper">
-	    <div class="row">
-	      	<div class="col-xs-9 mt">
-
-		        <!-- BASIC FORM ELELEMNTS -->
-                <div class="row content-panel mt">
-                    <div class="col-xs-12">
-
-			        	<div class="row centered">
-			        		<?php if ( isset($_GET['CodiCoordenador']) ) { ?>
-			        		<h3>Visão do Coordenador - <?php echo $rows_dimensiona[0]['Coordenador']; ?></h3>
-			        		<?php } else { ?>
-			        		<h3>Visão por Coordenador</h3>
-			        		<?php } ?>
-				        	<hr />
-			        	</div>
-
-		              	<table class="table table-hover datatable-buttons">
-			                <thead>
-						        <tr>
-						            <?php if ( isset($_GET['CodiCoordenador']) ) { ?>
-						            <th>Nome</th>
-						            <th>Supervisor</th>
-						            <th>Campanha</th>
-						            <?php } else { ?>
-						            <th>Coordenador</th>
-						            <th>Escalados</th>
-						            <th>Absenteísmo</th>
-						            <th>%</th>
-						            <?php } ?>
-						        </tr>
-						    </thead>
-
-						    <tbody>
-						        <?php
-
-                      foreach ( $rows_dimensiona as $valor) {
-
-                        if ( isset($valor['Coordenador']) ) {
-
-                            printf('<tr>');
-
-                            if ( isset($CodiCoordenador) ){
-                                printf('<td>' . $valor['Usuario'] . '</td>');
-                                printf('<td>' . $valor['Supervisor'] . '</td>');
-                                printf('<td>' . $valor['Campanha'] . '</td>');
-                            }
-                            else{
-
-                                $Absenteismo_Porcentagem = 0;
-
-                                if ($valor['ABS'] != 0) {
-                                    $Absenteismo_Porcentagem = ( $valor['ABS'] * 100) / $valor['Escalado'];
-                                    $Absenteismo_Porcentagem = number_format($Absenteismo_Porcentagem, 2, ',', '.');
-                                }
-
-                                printf('<td><a href="coordenador.php?CodiCoordenador=' . $valor['CodiCoordenador'] . '">' . $valor['Coordenador'] . '</a></td>');
-                                printf('<td>' . $valor['Escalado'] . '</td>');                                
-                                print('<td> ' . $valor['ABS'] . ' </td>');
-                                print('<td> ' . $Absenteismo_Porcentagem . '% </td>');
-                            }
-                            
-                            printf('</tr>');
-                        }
-                        
-                      }
-
-						        ?>
-						    </tbody>
-		              	</table>
-
-	              	</div>
-		        </div><!-- /col-xs-12 -->
-
-	      	</div>
-	      	<!-- /row -->
-
-	      	<?php require_once 'assets/includes/menu_direito.php' ?>
-
-	    </div>
-	    <!-- /row -->
-  	</section>
-</section>
-<!--main content end-->
-
-
-<?php require_once 'assets/includes/footer.php'; ?>
-
-<!-- Datatables -->
 <script>
-    $(document).ready(function() {
-        var handleDataTableButtons = function() {
-            if ($(".datatable-buttons").length) {
-                $(".datatable-buttons").DataTable({
-                    
-                    "language": {
-                        "sProcessing":    "Procesando...",
-                        "sLengthMenu":    "Mostrar _MENU_ registros",
-                        "sZeroRecords":   "Nenhum registro encontrado",
-                        "sEmptyTable":    "Nenhum registro encontrado",
-                        "sInfo":          "Mostrando registros de _START_ à _END_ de um total de _TOTAL_ registros",
-                        "sInfoEmpty":     "Mostrando registros de 0 à 0 de um total de 0 registros",
-                        "sInfoFiltered":  "(filtrado de um total de _MAX_ registros)",
-                        "sInfoPostFix":   "",
-                        "sSearch":        "Buscar:",
-                        "sUrl":           "",
-                        "sInfoThousands":  ",",
-                        "sLoadingRecords": "Cargando...",
-                        "oPaginate": {
-                            "sFirst":    "Primero",
-                            "sLast":    "Último",
-                            "sNext":    "Próximo",
-                            "sPrevious": "Anterior"
-                        },
-                        "oAria": {
-                            "sSortAscending":  ": Activar para ordenar la columna de manera ascendente",
-                            "sSortDescending": ": Activar para ordenar la columna de manera descendente"
-                        }
-                    },
+	// Datatables
+	$(document).ready(function() {
+		var handleDataTableButtons = function() {
+			if ($(".datatable-buttons").length) {
+				$("#table").DataTable({
+					// processing: true,
+					// serverSide: true,
+					lengthChange: false,
+					responsive: true,
+					pageLength: 10,
+					ajax: {
+						url: $('#table').data('url'),
+						"dataSrc": "",
+						type: 'POST',
+						dataType: 'json'
+					},
+					columns: [
+						{ data: 'Coordenador', name: 'Coordenador' },
+						{ data: 'Escalado', name: 'Escalado' },
+						{ data: 'ABS', name: 'ABS' },
+						{ data: 'porcentagem', name: 'porcentagem' },
+						{ data: 'CodiCoordenador', name: 'CodiCoordenador', visible: false }
+					],
+					columnDefs: [
+						{ orderable: false, className: 'select-checkbox', targets: 0 }
+					],
+					select: {
+						style: "multi",
+						selector: "td:first-child"
+					},
+					order: [[ 0, 'asc' ]],
+					rowCallback: function(row, data) {
+						$(row).data('id', data.id).css('cursor', 'pointer');
+						$('td', row).each(function() {
+							$(this).on('click', function() {
+								window.location.href = "coordenador/detalhes/" + data.CodiCoordenador;
+							});
+						});
+					},
+					drawCallback: function() {
 
-                    buttons: [{
-                            extend: 'copy',
-                            text: 'Copiar', 
-                            // className: 'btn-theme',
-                            exportOptions: {
-                                modifier: {
-                                    page: 'current'
-                                }
-                            },
-                        },
-                        {
-                            extend: 'excel',
-                            text: 'Excel', 
-                            // className: 'btn-theme',
-                            exportOptions: {
-                                modifier: {
-                                    page: 'current'
-                                }
-                            },
-                        },
-                        {
-                            extend: 'pdf',
-                            text: 'PDF', 
-                            // className: 'btn-theme',
-                            exportOptions: {
-                                modifier: {
-                                    page: 'current'
-                                }
-                            },
-                        },
-                    ],
-                    dom: "Bfrtip",
-                    deferRender: true,
-                    responsive: true,
-                    "pageLength": 15
-                });
-            }
-        };
+						$('[data-toggle="tooltip"]').tooltip();
+					},
 
-        TableManageButtons = function() {
-            "use strict";
-            return {
-                init: function() {
-                    handleDataTableButtons();
-                }
-            };
-        }();
+					"language": {
+						"sProcessing":    "Procesando...",
+						"sLengthMenu":    "Mostrar _MENU_ registros",
+						"sZeroRecords":   "Nenhum registro encontrado",
+						"sEmptyTable":    "Nenhum registro encontrado",
+						"sInfo":          "Mostrando registros de _START_ à _END_ de um total de _TOTAL_ registros",
+						"sInfoEmpty":     "Mostrando registros de 0 à 0 de um total de 0 registros",
+						"sInfoFiltered":  "(filtrado de um total de _MAX_ registros)",
+						"sInfoPostFix":   "",
+						"sSearch":        "Buscar:",
+						"sUrl":           "",
+						"sInfoThousands":  ",",
+						"sLoadingRecords": "Cargando...",
+						"oPaginate": {
+							"sFirst":    "Primero",
+							"sLast":    "Último",
+							"sNext":    "Próximo",
+							"sPrevious": "Anterior"
+						},
+						"oAria": {
+							"sSortAscending":  ": Activar para ordenar la columna de manera ascendente",
+							"sSortDescending": ": Activar para ordenar la columna de manera descendente"
+						}
+					},
 
-        TableManageButtons.init();
-    });
+					buttons: [
+						{
+							extend: 'copy',
+							text: 'Copiar',
+							// className: 'btn-theme',
+							exportOptions: {
+								modifier: {
+									page: 'current'
+								}
+							},
+						},
+						{
+							extend: 'excel',
+							text: 'Excel',
+							// className: 'btn-theme',
+							exportOptions: {
+								modifier: {
+									page: 'current'
+								}
+							},
+						},
+						{
+							extend: 'pdf',
+							text: 'PDF',
+							// className: 'btn-theme',
+							exportOptions: {
+								modifier: {
+									page: 'current'
+								}
+							},
+						}
+					]
+				});
+			}
+		};
+
+		TableManageButtons = function() {
+			"use strict";
+			return {
+				init: function() {
+					handleDataTableButtons();
+				}
+			};
+		}();
+
+		TableManageButtons.init();
+	});
+	// Datatables
+
 </script>
-<!-- /Datatables -->
+
+</body>
+
+</html>

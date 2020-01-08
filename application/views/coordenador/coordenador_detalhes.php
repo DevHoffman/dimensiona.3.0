@@ -18,21 +18,21 @@
 					<div class="col-xs-12">
 
 						<div class="row centered">
-							<h3>Visão por Supervisor</h3>
+							<h3> <?php echo $h3; ?></h3>
 							<hr />
 						</div>
 
-						<table id="table" data-url="<?php echo $datasource ?>" data-update="<?php echo $url_update; ?>" class="table table-hover datatable-buttons">
+						<table id="table-detalhes" class="table table-hover datatable-buttons" data-url="<?php echo $datasource ?>">
 							<thead>
 							<tr>
-								<th>Supervisor</th>
-								<th>Escalados</th>
-								<th>Absenteísmo</th>
-								<th>%</th>
-								<th></th>
+								<th> Nome </th>
+								<th> Supervisor </th>
+								<th> Campanha </th>
+								<th> Horário </th>
 							</tr>
 							</thead>
 						</table>
+
 					</div><!-- /col-xs-12 -->
 				</div><!-- /row -->
 
@@ -53,40 +53,27 @@
 	$(document).ready(function() {
 		var handleDataTableButtons = function() {
 			if ($(".datatable-buttons").length) {
-				$("#table").DataTable({
+				$("#table-detalhes").DataTable({
 					// processing: true,
 					// serverSide: true,
 					lengthChange: false,
 					responsive: true,
 					pageLength: 10,
 					ajax: {
-						url: $('#table').data('url'),
+						url: $('#table-detalhes').data('url'),
 						"dataSrc": "",
 						type: 'POST',
 						dataType: 'json'
 					},
 					columns: [
+						{ data: 'Usuario', name: 'Usuario' },
 						{ data: 'Supervisor', name: 'Supervisor' },
-						{ data: 'Escalado', name: 'Escalado' },
-						{ data: 'ABS', name: 'ABS' },
-						{ data: 'porcentagem', name: 'porcentagem' },
-						{ data: 'CodiSupervisor', name: 'CodiSupervisor', visible: false }
+						{ data: 'Campanha', name: 'Campanha' },
+						{ data: 'Horario', name: 'Horario' },
 					],
-					columnDefs: [
-						{ orderable: false, className: 'select-checkbox', targets: 0 }
-					],
-					select: {
-						style: "multi",
-						selector: "td:first-child"
-					},
 					order: [[ 0, 'asc' ]],
 					rowCallback: function(row, data) {
 						$(row).data('id', data.id).css('cursor', 'pointer');
-						$('td', row).each(function() {
-							$(this).on('click', function() {
-								window.location.href = "supervisor/detalhes/" + data.CodiSupervisor;
-							});
-						});
 					},
 					drawCallback: function() {
 
@@ -170,5 +157,4 @@
 </script>
 
 </body>
-
 </html>

@@ -3,9 +3,8 @@ $(document).ready(function() {
 	var handleDataTableButtons = function() {
 		if ($(".datatable-buttons").length) {
 			$("#table").DataTable({
-				destroy: true,
-				processing: false,
-				serverSide: false,
+				// processing: true,
+				// serverSide: true,
 				lengthChange: false,
 				responsive: true,
 				pageLength: 10,
@@ -19,7 +18,7 @@ $(document).ready(function() {
 					{ data: 'Campanha', name: 'Campanha' },
 					{ data: 'Escalado', name: 'Escalado' },
 					{ data: 'ABS', name: 'ABS' },
-					{ data: 'porcentagem', name: 'porcentagem' }
+					{ data: 'porcentagem', name: 'porcentagem' },
 				],
 				columnDefs: [
 					{ orderable: false, className: 'select-checkbox', targets: 0 }
@@ -51,9 +50,96 @@ $(document).ready(function() {
 
 					$('td', row).each(function() {
 						$(this).on('click', function() {
-							window.location.href = 'campanha/detalhes/' + data.CodiCampanha;
+							window.location.href = "campanha/detalhes/" + data.CodiCampanha;
 						});
 					});
+				},
+				drawCallback: function() {
+
+					$('[data-toggle="tooltip"]').tooltip();
+				},
+
+				"language": {
+					"sProcessing":    "Procesando...",
+					"sLengthMenu":    "Mostrar _MENU_ registros",
+					"sZeroRecords":   "Nenhum registro encontrado",
+					"sEmptyTable":    "Nenhum registro encontrado",
+					"sInfo":          "Mostrando registros de _START_ à _END_ de um total de _TOTAL_ registros",
+					"sInfoEmpty":     "Mostrando registros de 0 à 0 de um total de 0 registros",
+					"sInfoFiltered":  "(filtrado de um total de _MAX_ registros)",
+					"sInfoPostFix":   "",
+					"sSearch":        "Buscar:",
+					"sUrl":           "",
+					"sInfoThousands":  ",",
+					"sLoadingRecords": "Cargando...",
+					"oPaginate": {
+						"sFirst":    "Primero",
+						"sLast":    "Último",
+						"sNext":    "Próximo",
+						"sPrevious": "Anterior"
+					},
+					"oAria": {
+						"sSortAscending":  ": Activar para ordenar la columna de manera ascendente",
+						"sSortDescending": ": Activar para ordenar la columna de manera descendente"
+					}
+				},
+
+				buttons: [
+					{
+						extend: 'copy',
+						text: 'Copiar',
+						// className: 'btn-theme',
+						exportOptions: {
+							modifier: {
+								page: 'current'
+							}
+						},
+					},
+					{
+						extend: 'excel',
+						text: 'Excel',
+						// className: 'btn-theme',
+						exportOptions: {
+							modifier: {
+								page: 'current'
+							}
+						},
+					},
+					{
+						extend: 'pdf',
+						text: 'PDF',
+						// className: 'btn-theme',
+						exportOptions: {
+							modifier: {
+								page: 'current'
+							}
+						},
+					}
+				]
+			});
+
+			$("#table-detalhes").DataTable({
+				// processing: true,
+				// serverSide: true,
+				lengthChange: false,
+				responsive: true,
+				pageLength: 10,
+				ajax: {
+					url: $('#table-detalhes').data('url'),
+					"dataSrc": "",
+					type: 'POST',
+					dataType: 'json'
+				},
+				columns: [
+					{ data: 'Usuario', name: 'Usuario' },
+					{ data: 'Supervisor', name: 'Supervisor' },
+					{ data: 'Coordenador', name: 'Coordenador' },
+					{ data: 'Horario', name: 'Horario' },
+					{ data: 'CodiUsuario', name: 'CodiUsuario', visible: false }
+				],
+				order: [[ 0, 'asc' ]],
+				rowCallback: function(row, data) {
+					$(row).data('id', data.id).css('cursor', 'pointer');
 				},
 				drawCallback: function() {
 
