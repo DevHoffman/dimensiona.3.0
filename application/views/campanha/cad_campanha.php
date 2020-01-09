@@ -1,254 +1,272 @@
-<?php
+<!DOCTYPE html>
+<html lang="pt-br">
+	<head>
+		<?php echo $header ?>
+	</head>
+	<body>
 
-// Conectando ao Banco
-require_once 'assets/includes/conexao.php';
+		<?php echo $navbar ?>
 
-$_SESSION['painel_administrativo'] = true;
+		<section id="main-content">
+			<section class="wrapper">
+				<div class="row">
+					<div class="col-xs-9 mt">
 
-if ( !isset($_SESSION['auth']) ){
-  $_SESSION['auth'] = false;
-}
+						<!--CUSTOM CHART START -->
+						<div class="border-head">
+						  <h3>Campanha</h3>
+						</div>
 
-if ( $_SESSION['auth'] == false ){
-  	header('location: ../');
-  	exit;
-}
-else{
-    require_once 'assets/includes/header.php';
-}
+						<!-- BASIC FORM ELELEMNTS -->
+						<div class="row content-panel mt">
+							<div class="col-xs-12">
+								<div class="panel-heading">
+								  <ul class="nav nav-tabs nav-justified">
 
+									<li class="active">
+									  <a data-toggle="tab" href="#overview">Visualizar Campanhas</a>
+									</li>
 
-require_once 'assets/includes/menu_esquerdo.php';
+									<li>
+									  <a data-toggle="tab" href="#edit">Cadastrar Campanhas</a>
+									</li>
 
-require_once 'assets/includes/menu_topo.php';
+								  </ul>
+								</div>
+								<!-- /panel-heading -->
+								<div class="panel-body">
+									<div class="tab-content">
+										<div id="overview" class="tab-pane active">
+											<div class="row">
+												<div class="col-md-12 profile-text">
+													<table id="table" data-url="<?php echo $datasource ?>" data-update="<?php echo $url_update ?>" data-delete="<?php echo $url_delete ?>" class="table table-hover datatable-buttons">
+														<hr>
+														<thead>
+															<tr>
+																<th>Nome da Campanha</th>
+																<th></th>
+															</tr>
+														</thead>
+													</table>
+												</div>
+												<!-- /col-md-4 -->
+											</div>
+											<!-- /OVERVIEW -->
+										</div>
 
-if ( isset($_POST['Campanha']) ){
+										<!-- /tab-pane -->
+										<div id="edit" class="tab-pane">
+											<div class="row">
+												<div class="col-xs-8 col-xs-offset-2 detailed">
+													<h4 class="mb">Cadastro de Campanhas</h4>
+													<form id="cadastro_campanha" role="form" class="form-horizontal" method="POST" enctype="multipart/form-data"  data-cadastrar="<?php echo $url_cadastrar ?>">
+														<br />
+														<div class="form-group">
+															<label class="col-xs-4 control-label">Nome da Campanha</label>
+															<div class="col-xs-8">
+																<input type="text" id="Campanha" name="Campanha" class="form-control" required placeholder="" value="" />
+															</div>
+														</div>
+														<br />
+														<br />
 
-	$Campanha = mysqli_real_escape_string($ligacao, $_POST['Campanha']);
+														<div class="form-group">
+															<div class="col-xs-9">
+																<button class="btn btn-default" type="reset"><i class="fa fa-trash"></i>&nbsp;&nbsp; Limpar</button>
+															</div>
+															<div class="col-xs-3">
+																<button class="btn btn-theme centered submit-loader" type="submit"><i class="fa fa-pencil"></i>&nbsp;&nbsp; Cadastrar </button>
+															</div>
+														</div>
+														<br />
+												  </form>
+												</div>
+											</div>
+											<!-- /row -->
+										</div>
+										<!-- /tab-pane -->
+									</div>
+									<!-- /tab-content -->
+								</div>
+								<!-- /panel-body -->
+							</div>
+							<!-- /col-xs-12 -->
+						</div>
+						<!-- /col-xs-12 -->
 
-	$sql = sprintf("SELECT * FROM tbl_campanha WHERE Campanha='$Campanha'");
-	$query = $ligacao->query($sql);
+					</div>
+					<!-- /row -->
 
-	if ($query->num_rows == 0){
-		$sql = sprintf("INSERT INTO tbl_campanha (Campanha) VALUES ('$Campanha')");
-		$ligacao->query($sql);
+					<?php echo $sidebar ?>
 
-	    $_SESSION['TituloMensagem'] = "Sucesso!";
-        $_SESSION['TipoMensagem'] = "green";
-	    $_SESSION['Mensagem'] = "Campanha " . $Campanha . " adicionada a lista de campanhas.";
-	}
-	else{
-	    $_SESSION['TituloMensagem'] = "Erro!";
-        $_SESSION['TipoMensagem'] = "red";
-	    $_SESSION['Mensagem'] = "Verifique se a Campanha " . $Campanha . " existe antes de cadastrar.";
-	}
+				</div>
+				<!-- /row -->
+			</section>
+		</section>
+		<!--main content end-->
 
-}
-                            
-$query_nivelAcesso = "SELECT U.CodiNivelAcesso, N.NivelAcesso FROM tbl_usuarios U, tbl_nivelacesso N WHERE U.CodiNivelAcesso=N.CodiNivelAcesso GROUP BY N.NivelAcesso";
-$query_nivelAcesso = $ligacao->query($query_nivelAcesso);
+		<?php echo $footer ?>
 
-$sql = "SELECT CodiCampanha, Campanha FROM tbl_campanha C GROUP BY Campanha";
-$query_campanha = $ligacao->query($sql);
+		<?php echo $scripts ?>
 
-mysqli_close($ligacao);
+		<script  type="text/javascript">
+		// Datatables
+		var url_delete = $('#table').data('delete');
+		var url_cadastrar = $('#cadastro_campanha').data('cadastrar');
 
-?>
+		$(document).ready(function() {
+			var handleDataTableButtons = function() {
+				if ($(".datatable-buttons").length) {
+					var table = $("#table").DataTable({
+						// processing: true,
+						// serverSide: true,
+						lengthChange: false,
+						responsive: true,
+						pageLength: 10,
+						ajax: {
+							url: $('#table').data('url'),
+							type: 'POST',
+							dataType: 'json'
+						},
+						columns: [
+							{ data: 'Campanha', name: 'Campanha' },
+							{ data: 'CodiCampanha', name: 'CodiCampanha' },
+						],
+						order: [[ 0, 'asc' ]],
+						rowCallback: function(row, data) {
+							$(row).css('cursor', 'pointer');
+							var btnDelete = $(`<span href="${url_delete}${data.CodiCampanha}" class="text-danger"><i class="fa fa-trash"></i></span>`);
+							$('td:eq(1)', row).html(btnDelete);
+							var campanha = `${data.Campanha}`;
 
-<section id="main-content">
-  	<section class="wrapper">
-	    <div class="row">
-	      	<div class="col-xs-9 mt">
+							$(btnDelete).click(function() {
+								$.ajax({
+									type: 'post',
+									url: btnDelete.attr('href'),
+									dataType: 'json',
+									beforeSend: function() {
+										confirm(`Deseja excluir a campanha ${data.Campanha}?`);
+									},
+									error: function() {
+										alert(`Erro ao excluir a campanha ${data.Campanha}!`);
+									},
+									success: function(msg) {
+										alert(`Campanha ${data.Campanha} excluída com sucesso!`);
+										table.ajax.reload();
+									}
+								});
+							});
+						},
+						drawCallback: function() {
 
-		        <!--CUSTOM CHART START -->
-		        <div class="border-head">
-		          <h3>Campanha</h3>
-		        </div>
+							$('[data-toggle="tooltip"]').tooltip();
+						},
 
-		        <!-- BASIC FORM ELELEMNTS -->
-                <div class="row content-panel mt">
-                    <div class="col-xs-12">
-			            <div class="panel-heading">
-			              <ul class="nav nav-tabs nav-justified">
+						"language": {
+							"sProcessing":    "Procesando...",
+							"sLengthMenu":    "Mostrar _MENU_ registros",
+							"sZeroRecords":   "Nenhum registro encontrado",
+							"sEmptyTable":    "Nenhum registro encontrado",
+							"sInfo":          "Mostrando registros de _START_ à _END_ de um total de _TOTAL_ registros",
+							"sInfoEmpty":     "Mostrando registros de 0 à 0 de um total de 0 registros",
+							"sInfoFiltered":  "(filtrado de um total de _MAX_ registros)",
+							"sInfoPostFix":   "",
+							"sSearch":        "Buscar:",
+							"sUrl":           "",
+							"sInfoThousands":  ",",
+							"sLoadingRecords": "Cargando...",
+							"oPaginate": {
+								"sFirst":    "Primero",
+								"sLast":    "Último",
+								"sNext":    "Próximo",
+								"sPrevious": "Anterior"
+							},
+							"oAria": {
+								"sSortAscending":  ": Activar para ordenar la columna de manera ascendente",
+								"sSortDescending": ": Activar para ordenar la columna de manera descendente"
+							}
+						},
 
-			                <li class="active">
-			                  <a data-toggle="tab" href="#overview">Visualizar Campanhas</a>
-			                </li>
+						buttons: [
+							{
+								extend: 'copy',
+								text: 'Copiar',
+								// className: 'btn-theme',
+								exportOptions: {
+									modifier: {
+										page: 'current'
+									}
+								},
+							},
+							{
+								extend: 'excel',
+								text: 'Excel',
+								// className: 'btn-theme',
+								exportOptions: {
+									modifier: {
+										page: 'current'
+									}
+								},
+							},
+							{
+								extend: 'pdf',
+								text: 'PDF',
+								// className: 'btn-theme',
+								exportOptions: {
+									modifier: {
+										page: 'current'
+									}
+								},
+							}
+						]
 
-			                <li>
-			                  <a data-toggle="tab" href="#edit">Cadastrar Campanhas</a>
-			                </li>
+					});
+				}
+			};
 
-			              </ul>
-			            </div>
-			            <!-- /panel-heading -->
-			            <div class="panel-body">
-			              	<div class="tab-content">
-				                <div id="overview" class="tab-pane active">
-				                  	<div class="row">
-					                    <div class="col-md-12 profile-text">
-							              	<table class="table table-hover datatable-buttons">
-								                <hr>
-								                <thead>
-								                  	<tr>
-								                    	<th>Nome da Campanha</th>
-								                  	</tr>
-								                </thead>
-								                <tbody>
+			TableManageButtons = function() {
+				"use strict";
+				return {
+					init: function() {
+						handleDataTableButtons();
+					}
+				};
+			}();
 
-											    	<?php
-										    		
-											    	while ( $row = mysqli_fetch_array($query_campanha) ) {
-											    		echo '<tr>';
-											    		echo '<td>' . $row['Campanha'] . '</td>';
-											    		echo '</tr>';
-											    	}
-										    		
-											    	?>
+			TableManageButtons.init();
+			/* local validation */
+			$('#cadastro_campanha').validate({
 
-								                </tbody>
-							              	</table>
-					                    </div>
-					                    <!-- /col-md-4 -->
-				                  	</div>
-				                  	<!-- /OVERVIEW -->
-				                </div>
+				/* submit via ajax */
+				submitHandler: function(form) {
 
-				                <!-- /tab-pane -->
-				                <div id="edit" class="tab-pane">
-				                  	<div class="row">
-					                    <div class="col-xs-8 col-xs-offset-2 detailed">
-					                      	<h4 class="mb">Cadastro de Campanhas</h4>
-					                      	<form role="form" class="form-horizontal" action="cad_campanha.php" method="POST" enctype="multipart/form-data">
-					                      	<br />
-					                        <div class="form-group">
-					                            <label class="col-xs-4 control-label">Nome da Campanha</label>
-					                            <div class="col-xs-8">
-					                              	<input type="text" name="Campanha" class="form-control" required placeholder="" value="" />
-					                            </div>
-					                        </div>
-					                      	<br />
-					                      	<br />
+					var campanha = $("#Campanha").val();
 
-					                        <div class="form-group">
-					                          	<div class="col-xs-9">
-				                            		<button class="btn btn-default" type="reset">Cancelar</button>
-					                          	</div>
-					                          	<div class="col-xs-3">
-					                            	<button class="btn btn-theme centered" type="submit"><i class="fa fa-pencil"></i>&nbsp;&nbsp; Alterar Dados</button>
-					                          	</div>
-					                        </div>
-					                      	<br />
+					$.ajax({
 
-					                      </form>
-					                    </div>
-				                  	</div>
-				                  	<!-- /row -->
-				                </div>
-				                <!-- /tab-pane -->
-			              	</div>
-			              	<!-- /tab-content -->
-			            </div>
-			            <!-- /panel-body -->
-		          	</div>
-		          	<!-- /col-xs-12 -->
-		        </div>
-		        <!-- /col-xs-12 -->
+						url: `${url_cadastrar}${campanha}`,
+						type: "POST",
+						data: $(form).serialize(),
+						contentType: false,
+						processData: false,
+						success: function() {
+							// Message was sent
+							alert("Campanha " + campanha + " cadastrada com sucesso!");
+							$("#table").DataTable().ajax.reload();
+						},
+						error: function(a,b) {
+							console.log(a);
+							console.log(b);
+							// alert("Erro ao cadastrar a campanha " + campanha + "!");
+						}
+					});
+				}
 
-	      	</div>
-	      	<!-- /row -->
+			});
+		});
+		// Datatables
+	</script>
 
-	      	<?php require_once 'assets/includes/menu_direito.php' ?>
+	</body>
 
-	    </div>
-	    <!-- /row -->
-  	</section>
-</section>
-<!--main content end-->
-
-<?php require_once 'assets/includes/footer.php'; ?>
-
-<!-- Datatables -->
-<script>
-    $(document).ready(function() {
-        var handleDataTableButtons = function() {
-            if ($(".datatable-buttons").length) {
-                $(".datatable-buttons").DataTable({
-                    
-                    "language": {
-                        "sProcessing":    "Procesando...",
-                        "sLengthMenu":    "Mostrar _MENU_ registros",
-                        "sZeroRecords":   "Nenhum registro encontrado",
-                        "sEmptyTable":    "Nenhum registro encontrado",
-                        "sInfo":          "Mostrando registros de _START_ à _END_ de um total de _TOTAL_ registros",
-                        "sInfoEmpty":     "Mostrando registros de 0 à 0 de um total de 0 registros",
-                        "sInfoFiltered":  "(filtrado de um total de _MAX_ registros)",
-                        "sInfoPostFix":   "",
-                        "sSearch":        "Buscar:",
-                        "sUrl":           "",
-                        "sInfoThousands":  ",",
-                        "sLoadingRecords": "Cargando...",
-                        "oPaginate": {
-                            "sFirst":    "Primero",
-                            "sLast":    "Último",
-                            "sNext":    "Próximo",
-                            "sPrevious": "Anterior"
-                        },
-                        "oAria": {
-                            "sSortAscending":  ": Activar para ordenar la columna de manera ascendente",
-                            "sSortDescending": ": Activar para ordenar la columna de manera descendente"
-                        }
-                    },
-
-                    buttons: [{
-                            extend: 'copy',
-                            text: 'Copiar', 
-                            // className: 'btn-theme',
-                            exportOptions: {
-                                modifier: {
-                                    page: 'current'
-                                }
-                            },
-                        },
-                        {
-                            extend: 'excel',
-                            text: 'Excel', 
-                            // className: 'btn-theme',
-                            exportOptions: {
-                                modifier: {
-                                    page: 'current'
-                                }
-                            },
-                        },
-                        {
-                            extend: 'pdf',
-                            text: 'PDF', 
-                            // className: 'btn-theme',
-                            exportOptions: {
-                                modifier: {
-                                    page: 'current'
-                                }
-                            },
-                        },
-                    ],
-                    dom: "Bfrtip",
-                    deferRender: true,
-                    responsive: true,
-                    "pageLength": 15
-                });
-            }
-        };
-
-        TableManageButtons = function() {
-            "use strict";
-            return {
-                init: function() {
-                    handleDataTableButtons();
-                }
-            };
-        }();
-
-        TableManageButtons.init();
-    });
-</script>
-<!-- /Datatables -->
+</html>

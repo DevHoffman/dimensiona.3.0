@@ -15,7 +15,7 @@
 <script src="<?php echo base_url('assets/lib/sparkline-chart.js') ?>"></script>
 <script src="<?php echo base_url('assets/lib/zabuto_calendar.js') ?>"></script>
 
-<?php if ( !empty($tituloMensagem) ) { ?>
+<?php if ( !empty($_SESSION['tituloMensagem']) ) { ?>
 
 	<script src="<?php echo base_url('assets/lib/iziToast-master/dist/js/iziToast.min.js') ?>" type="text/javascript"></script>
 
@@ -23,10 +23,10 @@
 		$(document).ready(function() {
 
 			iziToast.show({
-				title: '<?php echo $tituloMensagem;unset($tituloMensagem); ?>',
-				image: '<?php echo base_url("assets/images/Foto/{$usuarioFoto}") ?>',
+				title: '<?php echo $_SESSION['tituloMensagem'];unset($_SESSION['tituloMensagem']); ?>',
+				image: '<?php echo base_url("assets/images/Foto/{$_SESSION['usuarioFoto']}") ?>',
 				// theme: 'dark', // dark, light
-				message: '<?php echo $mensagem;unset($mensagem); ?>',
+				message: '<?php echo $_SESSION['conteudoMensagem'];unset($_SESSION['conteudoMensagem']); ?>',
 
 
 
@@ -39,7 +39,7 @@
 				// messageSize: '',
 				// messageLineHeight: '',
 				// backgroundColor: '',
-				color: '<?php echo $tipoMensagem;unset($tipoMensagem); ?>', // blue, red, green, yellow
+				color: '<?php echo $_SESSION['tipoMensagem'];unset($_SESSION['tipoMensagem']); ?>', // blue, red, green, yellow
 				// iconText: '',
 				// iconColor: '',
 				iconUrl: null,

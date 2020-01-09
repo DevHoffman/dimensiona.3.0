@@ -24,6 +24,10 @@ body {
     font-size:13px;
 }
 
+.text-center {
+	text-align: center;
+}
+
 ul li {
     list-style: none;
 }
@@ -1940,6 +1944,12 @@ ul li {
 	padding: 5px 10px;
 	display: inline-block;
 }
+
+.table td span{
+	display: block;
+	text-align: center;
+}
+
 .dataTables_paginate.paging_bootstrap.pagination li:hover a, .dataTables_paginate.paging_bootstrap.pagination li.active a {
 	color: #fff;
 	background: #4ECDC4;
