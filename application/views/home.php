@@ -11,7 +11,7 @@
 			<div class="wrapper">
 				<div class="row">
 
-					<div class="col-sm-9 mt">
+					<div class="col-sm-12 mt">
 
 						<!--CUSTOM CHART START -->
 						<div class="border-head">
@@ -48,7 +48,7 @@
 						</div>
 					</div>
 
-					<?php require_once 'assets/includes/menu_direito.php' ?>
+					<?php // echo $sidebar ?>
 
 				</div> <!-- /row -->
 			</div>

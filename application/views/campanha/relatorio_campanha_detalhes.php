@@ -13,43 +13,23 @@
 
                     <div class="col-sm-12 mt">
 
-                        <div class="row centered content-panel mt">
-                            <h3>Pesquisa por Campanha</h3>
-                            <hr />
-
-                            <form id="formCampanha" role="form" class="form-horizontal col-xs-8 col-xs-offset-2" action="" method="POST" enctype="multipart/form-data">
-
-                                <div class="form-group col-xs-10">
-                                    <label class="control-label col-xs-4">Pesquise por datas</label>
-                                    <div class="col-xs-7">
-                                        <div class="input-large" data-date="01/01/2019" data-date-format="mm/dd/yyyy">
-                                            <input type="text" name="Data_Campanha" id="reservation" class="form-control" />
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="form-group col-xs-2 col-xs-offset-1">
-                                    <button type="submit" class="btn btn-theme">Pesquisar</button>
-                                </div>
-                            </form>
-                        </div>
-
                         <!-- Tabelas -->
                         <div class="row content-panel mt">
                             <div class="col-xs-12">
 
                                 <div class="row centered">
-                                    <h3>Visão por Campanha</h3>
+                                    <h3> <?php echo $h3; ?> </h3>
                                     <hr />
                                 </div>
 
-                                <table id="table" data-url="<?php echo $datasource ?>" data-update="<?php echo $url_update; ?>" class="table table-hover datatable-buttons">
+                                <table id="table" data-url="<?php echo $datasource ?>" class="table table-hover datatable-buttons">
                                     <thead>
                                         <tr>
-                                            <th>Campanha</th>
-                                            <th>Escalados</th>
-                                            <th>Absenteísmo</th>
-                                            <th>%</th>
+                                            <th> Nome </th>
+                                            <th> Supervisor </th>
+                                            <th> Coordenador </th>
+                                            <th> Horário </th>
+                                            <th></th>
                                         </tr>
                                     </thead>
                                 </table>
@@ -78,9 +58,9 @@
                         $("#table").DataTable({
                             // processing: true,
                             // serverSide: true,
-                            dom: 'Bfrtip',
                             lengthChange: false,
                             responsive: true,
+                            dom: 'Bfrtip',
                             pageLength: 10,
                             ajax: {
                                 url: $('#table').data('url'),
@@ -89,10 +69,11 @@
                                 dataType: 'json'
                             },
                             columns: [
-                                { data: 'Campanha', name: 'Campanha' },
-                                { data: 'Escalado', name: 'Escalado' },
-                                { data: 'ABS', name: 'ABS' },
-                                { data: 'porcentagem', name: 'porcentagem' },
+                                { data: 'Usuario', name: 'Usuario' },
+                                { data: 'Supervisor', name: 'Supervisor' },
+                                { data: 'Coordenador', name: 'Coordenador' },
+                                { data: 'Horario', name: 'Horario' },
+                                { data: 'CodiUsuario', name: 'CodiUsuario', visible: false }
                             ],
                             columnDefs: [
                                 { orderable: false, className: 'select-checkbox', targets: 0 }
@@ -105,11 +86,11 @@
                             rowCallback: function(row, data) {
                                 $(row).data('id', data.id).css('cursor', 'pointer');
 
-                                $('td', row).each(function() {
-                                    $(this).on('click', function() {
-                                        window.location.href = url_update + data.CodiCampanha;
-                                    });
-                                });
+                                // $('td', row).each(function() {
+                                //     $(this).on('click', function() {
+                                //         window.location.href = url_update + data.CodiCampanha;
+                                //     });
+                                // });
                             },
                             drawCallback: function() {
 
@@ -170,39 +151,8 @@
                 }();
 
                 TableManageButtons.init();
-
             });
             // Datatables
-
-            $('#formCampanha').validate({
-
-                /* submit via ajax */
-                submitHandler: function(form) {
-
-                    var campanha = $("#reservation").val();
-                    console.log(campanha);
-
-                    $.ajax({
-
-                        url: `/relatorios/relatorio_campanha/datatables_campanha/${campanha}`,
-                        type: "POST",
-                        data: $(form).serialize(),
-                        contentType: false,
-                        processData: false,
-                        success: function() {
-                            // Message was sent
-                            alert("Campanha " + campanha + " pesquisada com sucesso!");
-                            $("#table").DataTable().ajax.reload();
-                        },
-                        error: function(a,b) {
-                            // console.log(a);
-                            // console.log(b);
-
-                            alert("Erro ao cadastrar a campanha " + campanha + "!");
-                        }
-                    });
-                }
-            });
         </script>
 
         <script>

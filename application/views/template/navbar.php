@@ -6,10 +6,8 @@
 	<!--logo start-->
 	<a href="<?php echo base_url() ?>" class="logo"><b>DIMEN<span>SIONA</span></b></a>
 	<!--logo end-->
-	<div class="nav notify-row" id="top_menu">
-		<!--  notification start -->
+	<!-- <div class="nav notify-row" id="top_menu">
 		<ul class="nav top-menu">
-			<!-- settings start -->
 			<li class="dropdown">
 				<a data-toggle="dropdown" class="dropdown-toggle" href="<?php echo base_url('#') ?>">
 					<i class="fa fa-tasks"></i>
@@ -77,8 +75,6 @@
 					</li>
 				</ul>
 			</li>
-			<!-- settings end -->
-			<!-- inbox dropdown start-->
 			<li id="header_inbox_bar" class="dropdown">
 				<a data-toggle="dropdown" class="dropdown-toggle" href="#">
 					<i class="fa fa-envelope-o"></i>
@@ -142,8 +138,6 @@
 					</li>
 				</ul>
 			</li>
-			<!-- inbox dropdown end -->
-			<!-- notification dropdown start-->
 			<li id="header_notification_bar" class="dropdown">
 				<a data-toggle="dropdown" class="dropdown-toggle" href="#">
 					<i class="fa fa-bell-o"></i>
@@ -187,13 +181,10 @@
 					</li>
 				</ul>
 			</li>
-			<!-- notification dropdown end -->
 		</ul>
-		<!--  notification end -->
-	</div>
+	</div> -->
 	<div class="top-menu">
 		<ul class="nav pull-right top-menu">
-			<li><a class="logout" href="<?php echo base_url('painel') ?>" target="_blank">Painel Administrativo</a></li>
 			<li><a class="logout" href="<?php echo base_url('sair') ?>">Logout</a></li>
 			<li><a class="logout" href="<?php echo base_url('login') ?>">Login</a></li>
 		</ul>
@@ -240,11 +231,11 @@
 					<span> Relatório </span>
 				</a>
 				<ul class="sub">
-					<li><a href="<?php echo base_url('relatorio_campanha') ?>"> Campanha </a></li>
-					<li><a href="<?php echo base_url('relatorio_coordenador') ?>"> Coordenador </a></li>
-					<li><a href="<?php echo base_url('relatorio_supervisor') ?>"> Supervisor </a></li>
-					<li><a href="<?php echo base_url('relatorio_operador_sintetico') ?>"> Operador Sintético </a></li>
-					<li><a href="<?php echo base_url('relatorio_operador_analitico') ?>"> Operador Analítico </a></li>
+					<li><a href="<?php echo base_url('relatorios/relatorio_campanha') ?>"> Campanha </a></li>
+					<li><a href="<?php echo base_url('relatorios/relatorio_coordenador') ?>"> Coordenador </a></li>
+					<li><a href="<?php echo base_url('relatorios/relatorio_supervisor') ?>"> Supervisor </a></li>
+					<li><a href="<?php echo base_url('relatorios/relatorio_operador_sintetico') ?>"> Operador Sintético </a></li>
+					<li><a href="<?php echo base_url('relatorios/relatorio_operador_analitico') ?>"> Operador Analítico </a></li>
 				</ul>
 			</li>
 

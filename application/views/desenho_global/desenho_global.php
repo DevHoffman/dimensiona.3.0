@@ -11,7 +11,7 @@
 	<div class="wrapper">
 		<div class="row">
 
-			<div class="col-sm-9 mt">
+			<div class="col-sm-12 mt">
 
 				<!-- Tabelas -->
 				<div class="row content-panel mt">
@@ -38,7 +38,7 @@
 
 			</div>
 
-			<?php echo $sidebar ?>
+			<?php // echo $sidebar ?>
 
 		</div> <!-- /row -->
 	</div>
@@ -56,6 +56,7 @@
 				$("#table").DataTable({
 					// processing: true,
 					// serverSide: true,
+                    dom: 'Bfrtip',
 					lengthChange: false,
 					responsive: true,
 					pageLength: 10,
@@ -113,38 +114,21 @@
 						}
 					},
 
-					buttons: [
-						{
-							extend: 'copy',
-							text: 'Copiar',
-							// className: 'btn-theme',
-							exportOptions: {
-								modifier: {
-									page: 'current'
-								}
-							},
-						},
-						{
-							extend: 'excel',
-							text: 'Excel',
-							// className: 'btn-theme',
-							exportOptions: {
-								modifier: {
-									page: 'current'
-								}
-							},
-						},
-						{
-							extend: 'pdf',
-							text: 'PDF',
-							// className: 'btn-theme',
-							exportOptions: {
-								modifier: {
-									page: 'current'
-								}
-							},
-						}
-					]
+                    buttons: {
+                        buttons: [
+                            {
+                                extend: 'collection',
+                                text: 'Exportar',
+                                buttons: [
+                                    { extend: 'copy', text: 'Copiar Linhas' },
+                                    { extend: 'excel', text: 'Savar em Excel' },
+                                    { extend: 'csv', text: 'Savar em CSV' },
+                                    { extend: 'pdf', text: 'Savar em PDF' },
+                                    { extend: 'print', text: 'Imprimir' },
+                                ]
+                            }
+                        ]
+                    }
 				});
 			}
 		};

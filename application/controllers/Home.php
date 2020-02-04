@@ -17,6 +17,7 @@ class Home extends CI_Controller
 		$page_title = "Dimensiona";
 		$data['header'] = $this->template->header([ 'title' => $page_title ]);
 		$data['navbar']  = $this->template->navbar();
+		$data['sidebar']  = $this->template->sidebar();
 		$data['footer'] = $this->template->footer();
 		$data['scripts'] = $this->template->scripts();
 

@@ -10,7 +10,7 @@
 		<section id="main-content">
 			<section class="wrapper">
 				<div class="row">
-					<div class="col-xs-9 mt">
+					<div class="col-xs-12 mt">
 
 						<!--CUSTOM CHART START -->
 						<div class="border-head">
@@ -97,7 +97,7 @@
 					</div>
 					<!-- /row -->
 
-					<?php echo $sidebar ?>
+					<?php // echo $sidebar ?>
 
 				</div>
 				<!-- /row -->
@@ -110,162 +110,145 @@
 		<?php echo $scripts ?>
 
 		<script  type="text/javascript">
-		// Datatables
-		var url_delete = $('#table').data('delete');
-		var url_cadastrar = $('#cadastro_campanha').data('cadastrar');
+			// Datatables
+			var url_delete = $('#table').data('delete');
+			var url_cadastrar = $('#cadastro_campanha').data('cadastrar');
 
-		$(document).ready(function() {
-			var handleDataTableButtons = function() {
-				if ($(".datatable-buttons").length) {
-					var table = $("#table").DataTable({
-						// processing: true,
-						// serverSide: true,
-						lengthChange: false,
-						responsive: true,
-						pageLength: 10,
-						ajax: {
-							url: $('#table').data('url'),
-							type: 'POST',
-							dataType: 'json'
-						},
-						columns: [
-							{ data: 'Campanha', name: 'Campanha' },
-							{ data: 'CodiCampanha', name: 'CodiCampanha' },
-						],
-						order: [[ 0, 'asc' ]],
-						rowCallback: function(row, data) {
-							$(row).css('cursor', 'pointer');
-							var btnDelete = $(`<span href="${url_delete}${data.CodiCampanha}" class="text-danger"><i class="fa fa-trash"></i></span>`);
-							$('td:eq(1)', row).html(btnDelete);
-							var campanha = `${data.Campanha}`;
+			$(document).ready(function() {
+				var handleDataTableButtons = function() {
+					if ($(".datatable-buttons").length) {
+						var table = $("#table").DataTable({
+							// processing: true,
+							// serverSide: true,
+                            dom: 'Bfrtip',
+							lengthChange: false,
+							responsive: true,
+							pageLength: 10,
+							ajax: {
+								url: $('#table').data('url'),
+								type: 'POST',
+								dataType: 'json'
+							},
+							columns: [
+								{ data: 'Campanha', name: 'Campanha' },
+								{ data: 'CodiCampanha', name: 'CodiCampanha' },
+							],
+							order: [[ 0, 'asc' ]],
+							rowCallback: function(row, data) {
+								$(row).css('cursor', 'pointer');
+								var btnDelete = $(`<span href="${url_delete}${data.CodiCampanha}" class="text-danger"><i class="fa fa-trash"></i></span>`);
+								$('td:eq(1)', row).html(btnDelete);
+								var campanha = `${data.Campanha}`;
 
-							$(btnDelete).click(function() {
-								$.ajax({
-									type: 'post',
-									url: btnDelete.attr('href'),
-									dataType: 'json',
-									beforeSend: function() {
-										confirm(`Deseja excluir a campanha ${data.Campanha}?`);
-									},
-									error: function() {
-										alert(`Erro ao excluir a campanha ${data.Campanha}!`);
-									},
-									success: function(msg) {
-										alert(`Campanha ${data.Campanha} excluída com sucesso!`);
-										table.ajax.reload();
-									}
+								$(btnDelete).click(function() {
+									$.ajax({
+										type: 'post',
+										url: btnDelete.attr('href'),
+										dataType: 'json',
+										beforeSend: function() {
+											confirm(`Deseja excluir a campanha ${data.Campanha}?`);
+										},
+										error: function() {
+											alert(`Erro ao excluir a campanha ${data.Campanha}!`);
+										},
+										success: function(msg) {
+											alert(`Campanha ${data.Campanha} excluída com sucesso!`);
+											table.ajax.reload();
+										}
+									});
 								});
-							});
-						},
-						drawCallback: function() {
-
-							$('[data-toggle="tooltip"]').tooltip();
-						},
-
-						"language": {
-							"sProcessing":    "Procesando...",
-							"sLengthMenu":    "Mostrar _MENU_ registros",
-							"sZeroRecords":   "Nenhum registro encontrado",
-							"sEmptyTable":    "Nenhum registro encontrado",
-							"sInfo":          "Mostrando registros de _START_ à _END_ de um total de _TOTAL_ registros",
-							"sInfoEmpty":     "Mostrando registros de 0 à 0 de um total de 0 registros",
-							"sInfoFiltered":  "(filtrado de um total de _MAX_ registros)",
-							"sInfoPostFix":   "",
-							"sSearch":        "Buscar:",
-							"sUrl":           "",
-							"sInfoThousands":  ",",
-							"sLoadingRecords": "Cargando...",
-							"oPaginate": {
-								"sFirst":    "Primero",
-								"sLast":    "Último",
-								"sNext":    "Próximo",
-								"sPrevious": "Anterior"
 							},
-							"oAria": {
-								"sSortAscending":  ": Activar para ordenar la columna de manera ascendente",
-								"sSortDescending": ": Activar para ordenar la columna de manera descendente"
-							}
-						},
+							drawCallback: function() {
 
-						buttons: [
-							{
-								extend: 'copy',
-								text: 'Copiar',
-								// className: 'btn-theme',
-								exportOptions: {
-									modifier: {
-										page: 'current'
-									}
-								},
+								$('[data-toggle="tooltip"]').tooltip();
 							},
-							{
-								extend: 'excel',
-								text: 'Excel',
-								// className: 'btn-theme',
-								exportOptions: {
-									modifier: {
-										page: 'current'
-									}
+
+							"language": {
+								"sProcessing":    "Procesando...",
+								"sLengthMenu":    "Mostrar _MENU_ registros",
+								"sZeroRecords":   "Nenhum registro encontrado",
+								"sEmptyTable":    "Nenhum registro encontrado",
+								"sInfo":          "Mostrando registros de _START_ à _END_ de um total de _TOTAL_ registros",
+								"sInfoEmpty":     "Mostrando registros de 0 à 0 de um total de 0 registros",
+								"sInfoFiltered":  "(filtrado de um total de _MAX_ registros)",
+								"sInfoPostFix":   "",
+								"sSearch":        "Buscar:",
+								"sUrl":           "",
+								"sInfoThousands":  ",",
+								"sLoadingRecords": "Cargando...",
+								"oPaginate": {
+									"sFirst":    "Primero",
+									"sLast":    "Último",
+									"sNext":    "Próximo",
+									"sPrevious": "Anterior"
 								},
+								"oAria": {
+									"sSortAscending":  ": Activar para ordenar la columna de manera ascendente",
+									"sSortDescending": ": Activar para ordenar la columna de manera descendente"
+								}
 							},
-							{
-								extend: 'pdf',
-								text: 'PDF',
-								// className: 'btn-theme',
-								exportOptions: {
-									modifier: {
-										page: 'current'
-									}
-								},
-							}
-						]
 
-					});
-				}
-			};
+                            buttons: {
+                                buttons: [
+                                    {
+                                        extend: 'collection',
+                                        text: 'Exportar',
+                                        buttons: [
+                                            { extend: 'copy', text: 'Copiar Linhas' },
+                                            { extend: 'excel', text: 'Savar em Excel' },
+                                            { extend: 'csv', text: 'Savar em CSV' },
+                                            { extend: 'pdf', text: 'Savar em PDF' },
+                                            { extend: 'print', text: 'Imprimir' },
+                                        ]
+                                    }
+                                ]
+                            }
 
-			TableManageButtons = function() {
-				"use strict";
-				return {
-					init: function() {
-						handleDataTableButtons();
+						});
 					}
 				};
-			}();
 
-			TableManageButtons.init();
-			/* local validation */
-			$('#cadastro_campanha').validate({
-
-				/* submit via ajax */
-				submitHandler: function(form) {
-
-					var campanha = $("#Campanha").val();
-
-					$.ajax({
-
-						url: `${url_cadastrar}${campanha}`,
-						type: "POST",
-						data: $(form).serialize(),
-						contentType: false,
-						processData: false,
-						success: function() {
-							// Message was sent
-							alert("Campanha " + campanha + " cadastrada com sucesso!");
-							$("#table").DataTable().ajax.reload();
-						},
-						error: function(a,b) {
-							console.log(a);
-							console.log(b);
-							// alert("Erro ao cadastrar a campanha " + campanha + "!");
+				TableManageButtons = function() {
+					"use strict";
+					return {
+						init: function() {
+							handleDataTableButtons();
 						}
-					});
-				}
+					};
+				}();
 
+				TableManageButtons.init();
+				/* local validation */
+				$('#cadastro_campanha').validate({
+
+					/* submit via ajax */
+					submitHandler: function(form) {
+
+						var campanha = $("#Campanha").val();
+
+						$.ajax({
+
+							url: `${url_cadastrar}${campanha}`,
+							type: "POST",
+							data: $(form).serialize(),
+							contentType: false,
+							processData: false,
+							success: function() {
+								// Message was sent
+								alert("Campanha " + campanha + " cadastrada com sucesso!");
+								$("#table").DataTable().ajax.reload();
+							},
+							error: function(a,b) {
+								console.log(a);
+								console.log(b);
+								// alert("Erro ao cadastrar a campanha " + campanha + "!");
+							}
+						});
+					}
+				});
 			});
-		});
-		// Datatables
-	</script>
+			// Datatables
+		</script>
 
 	</body>
 

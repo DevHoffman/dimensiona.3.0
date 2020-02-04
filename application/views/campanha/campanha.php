@@ -11,7 +11,7 @@
 			<div class="wrapper">
 				<div class="row">
 
-					<div class="col-sm-9 mt">
+					<div class="col-sm-12 mt">
 
 						<!-- Tabelas -->
 						<div class="row content-panel mt">
@@ -37,7 +37,7 @@
 
 					</div>
 
-					<?php echo $sidebar ?>
+					<?php // echo $sidebar ?>
 
 				</div> <!-- /row -->
 			</div>
@@ -55,6 +55,7 @@
 						$("#table").DataTable({
 							// processing: true,
 							// serverSide: true,
+                            dom: 'Bfrtip',
 							lengthChange: false,
 							responsive: true,
 							pageLength: 10,
@@ -80,23 +81,6 @@
 							order: [[ 0, 'asc' ]],
 							rowCallback: function(row, data) {
 								$(row).data('id', data.id).css('cursor', 'pointer');
-								// var btnDelete = $(`<a href="${url_delete}${data.id}" class="text-danger"><i class="fas fa-trash"></i></a>`);
-
-								// btnDelete.showConfirm({
-								//     title: 'Deseja Excluir esse Registro?',
-								//     closeOnConfirm: true,
-								//     ajax: {
-								//         type: 'post',
-								//         url: btnDelete.attr('href'),
-								//         dataType: 'json',
-								//         success: function(xhr) {
-								//             formWarning(xhr);
-								//             table.ajax.reload();
-								//         }
-								//     }
-								// });
-
-								// $('td:eq(4)', row).html(btnDelete);
 
 								$('td', row).each(function() {
 									$(this).on('click', function() {
@@ -134,38 +118,21 @@
 								}
 							},
 
-							buttons: [
-								{
-									extend: 'copy',
-									text: 'Copiar',
-									// className: 'btn-theme',
-									exportOptions: {
-										modifier: {
-											page: 'current'
-										}
-									},
-								},
-								{
-									extend: 'excel',
-									text: 'Excel',
-									// className: 'btn-theme',
-									exportOptions: {
-										modifier: {
-											page: 'current'
-										}
-									},
-								},
-								{
-									extend: 'pdf',
-									text: 'PDF',
-									// className: 'btn-theme',
-									exportOptions: {
-										modifier: {
-											page: 'current'
-										}
-									},
-								}
-							]
+                            buttons: {
+                                buttons: [
+                                    {
+                                        extend: 'collection',
+                                        text: 'Exportar',
+                                        buttons: [
+                                            { extend: 'copy', text: 'Copiar Linhas' },
+                                            { extend: 'excel', text: 'Savar em Excel' },
+                                            { extend: 'csv', text: 'Savar em CSV' },
+                                            { extend: 'pdf', text: 'Savar em PDF' },
+                                            { extend: 'print', text: 'Imprimir' },
+                                        ]
+                                    }
+                                ]
+                            }
 						});
 					}
 				};

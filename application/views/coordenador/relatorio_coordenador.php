@@ -356,34 +356,3 @@ else{
 <script src="assets/vendors/moment/min/moment.min.js"></script>
 <script src="assets/vendors/bootstrap-daterangepicker/daterangepicker.js"></script>
 
-<script>
-  $(document).ready(function() {
-    var cb = function(start, end, label) {
-      console.log(start.toISOString(), end.toISOString(), label);
-    };
-
-    var optionSet1 = {
-      opens: 'center',
-      buttonClasses: ['btn btn-default'],
-      locale: {
-        applyLabel: 'Selecionar',
-        cancelLabel: 'Cancelar',
-        format: 'DD-MM-YYYY',
-        daysOfWeek: ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab'],
-        monthNames: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'],
-        firstDay: 1
-      }
-    };
-    $('#reservation').daterangepicker(optionSet1, cb);
-    $('#reservation').on('show.daterangepicker', function() {
-      console.log("show event fired");
-    });
-    $('#reservation').on('hide.daterangepicker', function() {
-      console.log("hide event fired");
-    });
-    $('#reservation').on('cancel.daterangepicker', function(ev, picker) {
-      console.log("cancel event fired");
-    });
-  });
-</script>
-<!-- /bootstrap-daterangepicker -->

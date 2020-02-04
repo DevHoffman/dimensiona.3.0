@@ -92,12 +92,6 @@ class Cad_campanha extends CI_Controller
 	public function remover($codicampanha){
 
 		$dados_form = $this->remove->remove_campanha($codicampanha);
-//		if ( $dados_form == 1 ) {
-//			$_SESSION['Mensagem'] = 'Campanha ' . $campanha . ' Excluída com Suceso';
-//		}
-//		else {
-//			$_SESSION['Mensagem'] = 'Erro ao remover campanha ' . $campanha . ', tente novamente';
-//		}
 
 		$this->output->set_content_type('application/json')->set_output(json_encode($dados_form));
 
